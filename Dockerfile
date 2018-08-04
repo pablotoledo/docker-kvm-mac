@@ -5,7 +5,7 @@ MAINTAINER Pablo Toledo "jptgjuanpablo@gmail.com"
 # Install.
 RUN apt-get update
 RUN apt-get -y upgrade
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y qemu 
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y qemu uml-utilities libguestfs-tools sudo
 RUN rm -rf /var/lib/apt/lists/*
 
 # Add files.
