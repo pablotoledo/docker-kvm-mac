@@ -1,11 +1,11 @@
 # Pull base image.
-FROM ubuntu:16.04
-MAINTAINER Deokhyun Ko "mainto@gmail.com"
+FROM ubuntu:18.04
+MAINTAINER Pablo Toledo "jptgjuanpablo@gmail.com"
 
 # Install.
 RUN apt-get update
 RUN apt-get -y upgrade
-RUN apt-get install -y qemu
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y qemu uml-utilities libguestfs-tools sudo
 RUN rm -rf /var/lib/apt/lists/*
 
 # Add files.
@@ -13,7 +13,7 @@ RUN mkdir -p /macos
 ADD boot.sh macos/
 ADD boot-install.sh macos/
 ADD boot-mac.sh macos/
-ADD enoch_rev2883_boot /macos
+ADD Clover.qcow2 /macos
 
 # Define working directory.
 WORKDIR /macos

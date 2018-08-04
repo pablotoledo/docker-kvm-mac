@@ -1,31 +1,33 @@
 #!/bin/bash
 
-# qemu-img create -f qcow2 mac_hdd.img 64G
-# echo 1 > /sys/module/kvm/parameters/ignore_msrs
+# See https://www.mail-archive.com/qemu-devel@nongnu.org/msg471657.html thread.
 #
-# Type the following after boot,
-# -v "KernelBooter_kexts"="Yes" "CsrActiveConfig"="103"
+# The "pc-q35-2.4" machine type was changed to "pc-q35-2.9" on 06-August-2017.
 #
-# printf 'DE:AD:BE:EF:%02X:%02X\n' $((RANDOM%256)) $((RANDOM%256))
-#
-# no_floppy = 1 is required for OS X guests!
-#
-# Commit 473a49460db0a90bfda046b8f3662b49f94098eb (qemu) makes "no_floppy = 0"
-# for pc-q35-2.3 hardware, and OS X doesn't like this (it hangs at "Waiting for
-# DSMOS" message). Hence, we switch to pc-q35-2.4 hardware.
-#
-# Network device "-device e1000-82545em" can be replaced with "-device vmxnet3"
-# for possibly better performance.
+# The "media=cdrom" part is needed to make Clover recognize the bootable ISO
+# image.
 
-qemu-system-x86_64 -enable-kvm -m 4096 -cpu Penryn,kvm=off,vendor=GenuineIntel \
-	  -machine pc-q35-2.4 \
+##################################################################################
+# NOTE: Comment out the "MY_OPTIONS" line in case you are having booting problems!
+##################################################################################
+
+MY_OPTIONS="+aes,+xsave,+avx,+xsaveopt,avx2,+smep"
+
+qemu-system-x86_64 -enable-kvm -m 4096 -cpu Penryn,kvm=on,vendor=GenuineIntel,+invtsc,vmware-cpuid-freq=on,$MY_OPTIONS\
+	  -machine pc-q35-2.9 \
 	  -smp 4,cores=2 \
-	  -usb -device usb-kbd -device usb-mouse \
-	  -kernel ./enoch_rev2883_boot \
+	  -usb -device usb-kbd -device usb-tablet \
+	  -device isa-applesmc,osk="ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc" \
+	  -drive if=pflash,format=raw,readonly,file=OVMF_CODE.fd \
+	  -drive if=pflash,format=raw,file=OVMF_VARS-1024x768.fd \
 	  -smbios type=2 \
-	  -device ide-drive,bus=ide.2,drive=MacHDD \
-	  -drive id=MacHDD,if=none,file=./hdd.img \
-	  -netdev user,id=usr0 -device e1000-82545em,netdev=usr0,id=vnet0 \
+	  -device ich9-intel-hda -device hda-duplex \
+	  -device ide-drive,bus=ide.2,drive=Clover \
+	  -drive id=Clover,if=none,snapshot=on,format=qcow2,file=./'Clover.qcow2' \
+	  -device ide-drive,bus=ide.1,drive=MacHDD \
+	  -drive id=MacHDD,if=none,file=./hdd.img,format=qcow2 \
 	  -device ide-drive,bus=ide.0,drive=MacDVD \
-	  -drive id=MacDVD,if=none,snapshot=on,file=./install.iso \
+	  -drive id=MacDVD,if=none,snapshot=on,media=cdrom,file=./install.iso \
+	  -netdev tap,id=net0,ifname=tap0,script=no,downscript=no -device e1000-82545em,netdev=net0,id=net0,mac=52:54:00:c9:18:27 \
+	  -monitor stdio
 	  -vnc 0.0.0.0:1 -k en-us
