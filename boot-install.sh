@@ -21,7 +21,6 @@ qemu-system-x86_64 -enable-kvm -m 4096 -cpu Penryn,kvm=on,vendor=GenuineIntel,+i
 	  -drive if=pflash,format=raw,readonly,file=OVMF_CODE.fd \
 	  -drive if=pflash,format=raw,file=OVMF_VARS-1024x768.fd \
 	  -smbios type=2 \
-	  -device ich9-intel-hda -device hda-duplex \
 	  -device ide-drive,bus=ide.2,drive=Clover \
 	  -drive id=Clover,if=none,snapshot=on,format=qcow2,file=./'Clover.qcow2' \
 	  -device ide-drive,bus=ide.1,drive=MacHDD \
@@ -29,5 +28,5 @@ qemu-system-x86_64 -enable-kvm -m 4096 -cpu Penryn,kvm=on,vendor=GenuineIntel,+i
 	  -device ide-drive,bus=ide.0,drive=MacDVD \
 	  -drive id=MacDVD,if=none,snapshot=on,media=cdrom,file=./install.iso \
 	  -netdev tap,id=net0,ifname=tap0,script=no,downscript=no -device e1000-82545em,netdev=net0,id=net0,mac=52:54:00:c9:18:27 \
-	  -monitor stdio
+
 
