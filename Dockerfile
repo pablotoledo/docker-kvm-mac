@@ -14,6 +14,8 @@ ADD boot.sh macos/
 ADD boot-install.sh macos/
 ADD boot-mac.sh macos/
 ADD Clover.qcow2 /macos
+ADD OVMF_CODE.fd /macos
+ADD OVMF_VARS-1024x768.fd /macos
 
 # Define working directory.
 WORKDIR /macos
