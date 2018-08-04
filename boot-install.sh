@@ -28,5 +28,6 @@ qemu-system-x86_64 -enable-kvm -m 4096 -cpu Penryn,kvm=on,vendor=GenuineIntel,+i
 	  -device ide-drive,bus=ide.0,drive=MacDVD \
 	  -drive id=MacDVD,if=none,snapshot=on,media=cdrom,file=./install.iso \
 	  -netdev tap,id=net0,ifname=tap0,script=no,downscript=no -device e1000-82545em,netdev=net0,id=net0,mac=52:54:00:c9:18:27 \
+	  -vga qxl
 
 
